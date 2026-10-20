@@ -7,7 +7,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice";
 
@@ -17,7 +16,6 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const toggleSignInForm = () => {
@@ -40,7 +38,6 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          console.log(user);
           updateProfile(user, {
             displayName: nameValue,
             photoURL: "https://example.com/jane-q-user/profile.jpg",
@@ -55,8 +52,6 @@ const Login = () => {
                   photoURL: photoURL,
                 }),
               );
-              navigate("/browser");
-
               // Profile updated!
               // ...
             })
@@ -80,7 +75,6 @@ const Login = () => {
           // Signed in
           const user = userCredential.user;
           console.log("signed in", user);
-          navigate("/browser");
 
           // ...
         })

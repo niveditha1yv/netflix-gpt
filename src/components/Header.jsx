@@ -1,11 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { onAuthStateChanged } from "firebase/auth";
+import { loginSuccess, logout } from "../redux/userSlice";
+import { Logo } from "../utils/contant";
 
 const Header = () => {
   const navigate = useNavigate();
-  const user = useSelector((store) => store.User);
+  const dispatch = useDispatch();
+  const user = useSelector((store) => store.user);
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
@@ -17,13 +22,39 @@ const Header = () => {
         // An error happened.
       });
   };
+
+  useEffect(() => {
+    const unSubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(
+          loginSuccess({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          }),
+        );
+        navigate("/browser");
+        // ...
+      } else {
+        // User is signed out
+        dispatch(logout());
+        navigate("/");
+
+        // ...
+      }
+    });
+
+    // unSubscribe will be called when component unmount
+    return () => unSubscribe();
+  }, []);
+
   return (
     <div className="absolute z-10 px-8 py-4 w-screen bg-gradient-to-b from-black flex justify-between">
-      <img
-        className="w-48"
-        src="https://occ.a.nflxso.net/dnmt/api/v6/iL4oJVDYZ8KLSrJ6eG2OwtghbfQ/AAAAAVIENVPMEM3Kn4hVzJseX4N8xPjtBDIpwuFDucWksdxQZ8Ss6Xf8U_vt7ThYYfRmzq0x1CS3nOwTGyVrgADvwfB_tPiK_liS2RjvI40RJSzbKRk-o8b3nCxHfCCnBsyB2XBB9_vRoSmN.svg"
-        alt="logo"
-      />
+      <img className="w-48" src={Logo} alt="logo" />
       <div>
         {user && (
           <button

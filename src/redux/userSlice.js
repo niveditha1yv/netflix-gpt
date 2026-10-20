@@ -4,7 +4,6 @@ const userSlice = createSlice({
   initialState: null,
   reducers: {
     loginSuccess: (state, action) => {
-      console.log("payload", action.payload);
       return action.payload;
     },
     logout: () => {
