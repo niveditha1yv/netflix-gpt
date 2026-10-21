@@ -6,7 +6,6 @@ const VedioBackground = ({ moviedId }) => {
 
   useMovieTrailer(moviedId);
 
-  console.log(moviedId);
   return (
     <div className="w-screen">
       <iframe
