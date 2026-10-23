@@ -7,7 +7,7 @@ const MainContainer = () => {
 
   if (!movieList) return;
 
-  const mainMovie = movieList[8];
+  const mainMovie = movieList[2];
 
   //console.log("trailer data:", mainMovie);
 

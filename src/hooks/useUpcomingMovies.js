@@ -11,7 +11,6 @@ const useUpcomingMovies = () => {
       API_OPTIONS,
     );
     const json = await data.json();
-    console.log("popular", json?.results);
 
     dispatch(dispatch(upcomigMovieList(json?.results)));
   };

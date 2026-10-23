@@ -6,11 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { loginSuccess, logout } from "../redux/userSlice";
 import { Logo } from "../utils/contant";
+import { toggleGptSearch } from "../redux/gptSlice";
+import { SUPORTED_LANG } from "../utils/contant";
+import { changeLang } from "../redux/configSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const showGptSearch = useSelector((store) => store.gpt?.showGptSearchPage);
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
@@ -52,19 +56,45 @@ const Header = () => {
     return () => unSubscribe();
   }, []);
 
+  const handleGptSearchClick = () => {
+    // Toggle GPT page
+    dispatch(toggleGptSearch());
+  };
+
+  const hadleLanguageChange = (e) => {
+    dispatch(changeLang(e.target.value));
+  };
+
   return (
     <div className="absolute z-10 px-8 py-4 w-screen bg-gradient-to-b from-black flex justify-between">
       <img className="w-48" src={Logo} alt="logo" />
-      <div>
-        {user && (
+      {user && (
+        <div>
+          <select
+            className="font-bold bg-gray-50 text-lg p-2 rounded-md mr-3"
+            onClick={hadleLanguageChange}
+          >
+            {SUPORTED_LANG.map((data) => (
+              <option key={data.identifier} value={data.identifier}>
+                {data.name}
+              </option>
+            ))}
+          </select>
+          <button
+            className="font-bold bg-purple-600 text-lg p-2 rounded-md text-white mr-3"
+            onClick={handleGptSearchClick}
+          >
+            {showGptSearch ? "Main Page" : "GPT Search"}
+          </button>
+
           <button
             className="font-bold bg-red-500 text-lg p-2 rounded-md text-white"
             onClick={handleSignOut}
           >
             Sign Out
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
